@@ -12,3 +12,28 @@ repos:
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-json
+
+  # check-dco: 验证 commit message 包含 Signed-off-by 行
+  - repo: https://github.com/Ikalus1988/pre-commit-dco
+    rev: 179f50b
+    hooks:
+      - id: check-dco
+
+  # 本地 hook: Lesson Schema 校验
+  - repo: local
+    hooks:
+      - id: validate-lessons
+        name: validate lesson schema
+        entry: python3 scripts/validate_lessons.py
+        language: system
+        files: ^lessons/.*\.md$
+        pass_filenames: false
+
+      # Enhanced DCO check (complements Ikalus1988/pre-commit-dco)
+      # Fixes: TC1b (multi-SOB per line) & TC2c (email with spaces)
+      # See: DCO质检方案对比白皮书.md for benchmark data
+      - id: check-dco-enhanced
+        name: DCO sign-off (enhanced validation)
+        entry: python3 scripts/check_dco_enhanced.py
+        language: system
+        stages: [commit-msg]
